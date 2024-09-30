@@ -1,6 +1,6 @@
 // Aaron Palomin
 // reminders for myself: don't have to put semicolons after expressions
-// make sure for put 
+// manufactuerer sure for put 
 
 // Declare a constant for the freezing point of water in Fahrenheit (32F)
 const freezing_point_of_water: f64 = 32.0;
