@@ -1,3 +1,4 @@
+// these are the education level for the student
 #[derive(Debug)]
 enum GradeLevel 
 {
@@ -6,6 +7,7 @@ enum GradeLevel
     PhD,
 }
 
+//these are the majors for the student
 #[derive(Debug)]
 enum Major 
 {
@@ -13,6 +15,7 @@ enum Major
     ElectricalEngineering,
 }
 
+// this is for student's major, grade and name.
 #[derive(Debug)]
 struct Student 
 {
@@ -21,6 +24,7 @@ struct Student
     major: Major,
 }
 
+// this is a constructor for the students 
 impl Student {
     fn new(name: String, grade: GradeLevel, major: Major) -> Self 
     {
@@ -31,7 +35,7 @@ impl Student {
             major,
         }
     }
-
+// this uses the match method 
     fn introduce_yourself(&self) 
     {
         println!("Hi, my name is {}.", self.name);
