@@ -1,24 +1,18 @@
-use std::cell::RefCell;
+use std::thread;
 
-fn ref_cell_simple() {
-    let num = 10;
-    let data = RefCell::new(num);
-    
-    // Borrow the data immutably
-    let data_ref = data.borrow();
-    println!("Data: {}", data_ref);
+fn main() {
+    let mut handles = vec![];
 
-    // Drop the immutable borrow so we can borrow mutably
-    drop(data_ref);
+    for i in 1..=3 {
+        let handle = thread::spawn(move || {
+            println!("Thread {}", i);
+        });
+        handles.push(handle);
+    }
 
-    println!("Data: {:?}", data);
+    for handle in handles {
+        handle.join().unwrap();
+    }
 
-    // Borrow the data mutably
-    let mut data_mut = data.borrow_mut();
-    *data_mut += 1;
-    println!("Data: {}", data_mut);
-}
-fn main() 
-{
-    ref_cell_simple();
+    println!("All threads completed.");
 }
