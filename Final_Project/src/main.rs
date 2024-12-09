@@ -30,7 +30,7 @@ fn main()
         "http://www.cinemark.com", "http://www.espn.com", "http://www.nintendo.com", "http://www.lg.com", 
         "http://www.spacex.com", "http://www.toyota.com", "http://abc.com", "http://www.foxnews.com", 
         "http://www.sonicdrivein.com", "http://www.nbc.com", "http://www.rockstargames.com", "http://www.ubisoft.com", 
-        "http://www.illumination.com", "http://www.dominos.com", "http://www.nike.com", "http://www.tacobell.com", 
+        "http://www.nba2k.com", "http://www.dominos.com", "http://www.nike.com", "http://www.tacobell.com", 
         "http://www.underarmour.com", "http://www.footlocker.com", "http://www.samsung.com", "http://www.dairyqueen.com", 
         "http://www.marvel.com", "http://www.dc.com", "http://www.android.com", "http://www.jackinthebox.com", 
         "http://www.nba.com", "http://www.texasroadhouse.com", "http://www.samsclub.com", "http://www.costco.com", 
