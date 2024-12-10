@@ -75,11 +75,7 @@ fn main()
 
     // Once all threads have completed their tasks, I lock the shared vector to read the statuses.
     let status_vec = status_vec.lock().unwrap();
-    for status in status_vec.iter() 
-    {
-        // I used this to print the status of each website
-        println!("{:?}", status);
-    }
+    print_stats(&status_vec);
 }
 
 // I used this function to retrieve when there is a timeout duration as for HTTP requests.
@@ -108,9 +104,7 @@ fn check_website(url: &str, timeout: Duration, max_retries: u32) -> Result<websi
         let start_time = Instant::now();
 
         // Being able to obtain HTTP GET request by using a timeout.
-        let response = ureq::get(url)
-            .timeout(timeout)
-            .call();
+        let response = ureq::get(url).timeout(timeout).call();
 
         match response {
             // We know if the request succeeds then it able to calculate the elapsed time and return to the statues.
@@ -125,16 +119,55 @@ fn check_website(url: &str, timeout: Duration, max_retries: u32) -> Result<websi
                 });
             }
             // I set it as if the request fails then it increments the retry counter.
-            Err(e) => {
+            Err(_) => {
                 retries += 1;
                 if retries == max_retries 
                 {
                     // We know that retries can be exhausted with me being able to return with the failure details.
-                    return Err(format!("Error: {} after {} retries", e, max_retries));
+                    return Err(format!("Max retries ({}) exceeded for {}", max_retries, url));
                 }
             }
         }
     }
     // This shouldn't be reached however I was able to return an error if the loops exists unexprected.
-    Err("Max retries exceeded".to_string())
+    Err("Unexpected loop exit".to_string())
+}
+
+
+// Function to print statistics summary
+fn print_stats(status_vec: &Vec<website_status::WebsiteStatus>) {
+    let total = status_vec.len();
+    let successes: Vec<_> = status_vec.iter().filter(|s| s.status.is_ok()).collect();
+    let failures: Vec<_> = status_vec.iter().filter(|s| s.status.is_err()).collect();
+    let total_success = successes.len();
+    let total_failure = failures.len();
+
+    let mut response_times: Vec<Duration> = successes.iter().map(|s| s.response_time).collect();
+    response_times.sort();
+
+    let fastest = response_times.first().cloned().unwrap_or(Duration::from_secs(0));
+    let slowest = response_times.last().cloned().unwrap_or(Duration::from_secs(0));
+    let average = if !response_times.is_empty() {
+        response_times.iter().sum::<Duration>() / response_times.len() as u32
+    } else {
+        Duration::from_secs(0)
+    };
+
+    println!("\nStats Summary:");
+    println!("--------------");
+    println!("- Total URLs Checked: {}", total);
+    println!("- Successful Responses: {}", total_success);
+    println!("- Failed Responses: {}", total_failure);
+    println!("- Fastest Response Time: {:.2?}", fastest);
+    println!("- Slowest Response Time: {:.2?}", slowest);
+    println!("- Average Response Time: {:.2?}", average);
+
+    let less_500ms = response_times.iter().filter(|&&t| t < Duration::from_millis(500)).count();
+    let between_500ms_1s = response_times.iter().filter(|&&t| t >= Duration::from_millis(500) && t < Duration::from_secs(1)).count();
+    let greater_1s = response_times.iter().filter(|&&t| t >= Duration::from_secs(1)).count();
+
+    println!("- Response Time Distribution:");
+    println!("  * < 500ms: {}", less_500ms);
+    println!("  * 500ms - 1s: {}", between_500ms_1s);
+    println!("  * > 1s: {}", greater_1s);
 }
